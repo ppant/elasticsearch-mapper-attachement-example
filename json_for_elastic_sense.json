@@ -1,0 +1,43 @@
+DELETE /test
+PUT /test
+{
+  "settings" : { "index" : { "number_of_shards" : 1, "number_of_replicas" : 0 }}
+}
+PUT /test/attachment/_mapping
+{
+  "attachment" : {
+    "properties" : {
+      "file" : {
+        "type" : "attachment",
+        "fields" : {
+          "title" : { "store" : "yes" },
+          "file" : { "term_vector":"with_positions_offsets", "store":"yes" }
+        }
+      }
+    }
+  }
+}
+PUT /test/attachment/1?refresh=true
+{
+  "file": "base64 encoded file"
+}
+GET /_search?pretty=true
+{
+  "fields" : ["title"],
+  "query" : {
+    "query_string" : {
+      "query" : "Cycling tips"
+    }
+  },
+  "highlight" : {
+    "fields" : {
+      "file" : {}
+    }
+  }
+}
+
+
+
+
+
+
